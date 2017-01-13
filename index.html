@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.3.0/css/bulma.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+</head>
+<body>
+<div id="app">
+    <top></top>
+
+    <section class="section">
+        <div class="container">
+            <form action="image.php" v-on:submit.prevent="onSubmit">
+                <div class="control has-addons">
+  <span class="select">
+    <select name="image">
+      <option :value="background.value" v-for="background in backgrounds">
+          {{background.text}}
+      </option>
+    </select>
+  </span>
+                    <input class="input is-expanded" type="text" name="id" placeholder="HeadHunter Id" v-model="id">
+                    <a class="button is-primary is-disabled">
+                        Generate
+                    </a>
+                </div>
+
+                <div class="control">
+                    <label>Отступ сверху:</label>
+                    <input class="input" type="text" v-model="start"><br>
+
+                    <label>Отступ между словами:</label>
+                    <input class="input" type="text" v-model="step">
+
+                    <label>Размер шрифта:</label>
+                    <input class="input" type="text" v-model="size">
+
+                    <p class="control">
+                        <a class="button is-primary" v-on:click="getImage">Submit</a>
+                    </p>
+                </div>
+            </form>
+            <img :src="imageUrl">
+        </div>
+    </section>
+</div>
+
+
+<script src="https://unpkg.com/vue@2.1.8/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.js"></script>
+
+<script>
+    Vue.component('top', {
+        template: `<section class="hero is-primary">
+        <div class="hero-body">
+        <div class="container">
+        <h1 class="title">
+        Image Posts Generator
+        </h1>
+        <h2 class="subtitle">
+        Work In Progress
+        </h2>
+        </div>
+        </div>
+        </section>`
+    });
+
+    let app = new Vue({
+        el: '#app',
+        data: {
+            imageUrl: '',
+            id: 19341594,
+            start: 250,
+            step: 50,
+            size: 40,
+            backgrounds: [
+                {text: "Larajobs #1", value: "larajobs1"},
+                {text: "Larajobs #2", value: "larajobs2"}
+            ]
+        },
+        methods: {
+            getImage: function () {
+                let url = '/image.php?id=' + this.id + '&start=' + this.start + '&step=' + this.step + '&size=' + this.size;
+                console.log(url);
+                this.imageUrl = url;
+            }
+        }
+
+    });
+</script>
+</body>
+</html>
