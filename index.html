@@ -5,6 +5,16 @@
     <title>Image Generator</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.3.0/css/bulma.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <style>
+        .generated {
+            position: relative;
+        }
+
+        .first {
+            position: absolute;
+        }
+
+    </style>
 </head>
 <body>
 <div id="app">
@@ -14,39 +24,48 @@
         <div class="container">
             <form action="image.php" v-on:submit.prevent="onSubmit">
                 <div class="control has-addons">
-  <span class="select">
-    <select name="image">
-      <option :value="background.value" v-for="background in backgrounds">
-          {{background.text}}
-      </option>
-    </select>
-  </span>
-                    <input class="input is-expanded" type="text" name="id" placeholder="HeadHunter Id" v-model="id">
-                    <a class="button is-primary is-disabled">
+                  <span class="select">
+                    <select name="image" v-model="config.selected">
+                      <option v-for="option in config.options" v-bind:value="option.value">
+                          {{ option.text }}
+                      </option>
+                    </select>
+                  </span>
+                    <input class="input is-expanded" type="text" name="id" placeholder="HeadHunter Id"
+                           v-model="config.id">
+                    <a class="button is-primary is-disabled" v-on:click="generate">
                         Generate
                     </a>
                 </div>
 
                 <div class="control">
                     <label>Отступ сверху:</label>
-                    <input class="input" type="text" v-model="start"><br>
-
-                    <label>Отступ между словами:</label>
-                    <input class="input" type="text" v-model="step">
-
-                    <label>Размер шрифта:</label>
-                    <input class="input" type="text" v-model="size">
-
-                    <p class="control">
-                        <a class="button is-primary" v-on:click="getImage">Submit</a>
-                    </p>
+                    <input class="input" type="text" v-model="config.start">
                 </div>
+                <div class="control">
+                    <label>Отступ между словами:</label>
+                    <input class="input" type="text" v-model="config.step">
+                </div>
+                <div class="control">
+                    <label>Размер шрифта:</label>
+                    <input class="input" type="text" v-model="config.size">
+                </div>
+                <p class="control">
+                    <a class="button is-primary" v-on:click="getImage">Submit</a>
+                </p>
             </form>
-            <img :src="imageUrl">
         </div>
     </section>
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <!--<img :src="generated.image">-->
+                <img :src="imageUrl">
+            </div>
+        </div>
 </div>
-
+</section>
+</div>
 
 <script src="https://unpkg.com/vue@2.1.8/dist/vue.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.js"></script>
@@ -71,18 +90,54 @@
         el: '#app',
         data: {
             imageUrl: '',
-            id: 19341594,
-            start: 250,
-            step: 50,
-            size: 40,
-            backgrounds: [
-                {text: "Larajobs #1", value: "larajobs1"},
-                {text: "Larajobs #2", value: "larajobs2"}
-            ]
+            image: '',
+            template: '',
+            config: {
+                id: 19341594,
+                start: 250,
+                step: 50,
+                size: 40,
+                selected: 'larajobs1',
+                options: [
+                    {text: "Larajobs #1", value: "larajobs1"},
+                    {text: "Larajobs #2", value: "larajobs2"},
+                    {text: "Larajobs #3", value: "larajobs3"},
+                    {text: "Larajobs #4", value: "larajobs4"},
+                    {text: "Larajobs #5", value: "larajobs5"}
+                ]
+            },
+            styleObject: {
+                color: '#fff',
+                fontSize: '40px',
+                top: '250px',
+                position: 'absolute'
+            },
+            generated: {
+                texts: {
+                    exp: ''
+                }
+            }
         },
         methods: {
+            generate: function () {
+                axios.get('/getTemplate.php', {
+                    params: {
+                        id: this.config.id
+                    }
+                })
+                    .then(response => {
+                        this.generated = response.data;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
             getImage: function () {
-                let url = '/image.php?id=' + this.id + '&start=' + this.start + '&step=' + this.step + '&size=' + this.size;
+                let url = 'image.php?id=' + this.config.id +
+                    '&start=' + this.config.start +
+                    '&step=' + this.config.step +
+                    '&size=' + this.config.size +
+                    '&image=' + this.config.selected;
                 console.log(url);
                 this.imageUrl = url;
             }
@@ -90,5 +145,42 @@
 
     });
 </script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function (d, w, c) {
+        (w[c] = w[c] || []).push(function () {
+            try {
+                w.yaCounter42100719 = new Ya.Metrika({
+                    id: 42100719,
+                    clickmap: true,
+                    trackLinks: true,
+                    accurateTrackBounce: true,
+                    webvisor: true
+                });
+            } catch (e) {
+            }
+        });
+
+        var n = d.getElementsByTagName("script")[0],
+            s = d.createElement("script"),
+            f = function () {
+                n.parentNode.insertBefore(s, n);
+            };
+        s.type = "text/javascript";
+        s.async = true;
+        s.src = "https://mc.yandex.ru/metrika/watch.js";
+
+        if (w.opera == "[object Opera]") {
+            d.addEventListener("DOMContentLoaded", f, false);
+        } else {
+            f();
+        }
+    })(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript>
+    <div><img src="https://mc.yandex.ru/watch/42100719" style="position:absolute; left:-9999px;" alt=""/></div>
+</noscript>
+<!-- /Yandex.Metrika counter -->
+
 </body>
 </html>

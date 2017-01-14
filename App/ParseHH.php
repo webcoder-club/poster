@@ -5,6 +5,8 @@ use Sunra\PhpSimple\HtmlDomParser;
 
 class ParseHH
 {
+    private $data = [];
+
     /**
      * ParseHH constructor.
      * @param int $id
@@ -12,6 +14,15 @@ class ParseHH
     function __construct(int $id)
     {
         $this->id = $id;
+
+        $link = 'https://hh.ru/vacancy/' . $this->id;
+        $html = file_get_contents($link);
+        $dom = HtmlDomParser::str_get_html($html);
+
+        $this->data['vacancy'] = $dom->find('h1', 0)->text();
+        $this->data['salary'] = $dom->find('.l-content-colum-1 .l-paddings', 1)->text();
+        $this->data['town'] = $dom->find('.l-content-colum-2', 1)->text();
+        $this->data['exp'] = $dom->find('[itemprop=experienceRequirements]', 0)->text();
     }
 
     /**
@@ -19,20 +30,19 @@ class ParseHH
      */
     public function execute()
     {
-        $link = 'https://hh.ru/vacancy/' . $this->id;
-        $html = file_get_contents($link);
-        $dom = HtmlDomParser::str_get_html($html);
-
-        $vacancy = $dom->find('h1', 0);
-        $salary = $dom->find('.l-content-colum-1 .l-paddings', 1);
-        $town = $dom->find('.l-content-colum-2', 1);
-        $exp = $dom->find('[itemprop=experienceRequirements]', 0);
-
         return [
-            new Text\Vacancy($vacancy->text()),
-            new Text\Salary($salary->text()),
-            new Text\Town($town->text()),
-            new Text\Experience($exp->text())
+            new Text\Vacancy($this->data['vacancy']),
+            new Text\Salary($this->data['salary']),
+            new Text\Town($this->data['town']),
+            new Text\Experience($this->data['exp'])
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getTexts()
+    {
+        return $this->data;
     }
 }

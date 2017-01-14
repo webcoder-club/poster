@@ -8,14 +8,13 @@ $step = $_GET['step'] ?? 50;
 $debug = $_GET['debug'] ?? false;
 $size = (int)$_GET['size'];
 
-$image = 'backgrounds/' . $imageName . '.jpg';
 $parseHH = new App\ParseHH($id);
 
 
 if (!$debug) {
     header('Content-type: image/jpeg');
 }
-$jpg_image = imagecreatefromjpeg($image);
+$jpg_image = imagecreatefromjpeg(App\DataHelper::getImage($imageName));
 
 foreach ($parseHH->execute() as $item) {
     $item->setImage($jpg_image);
