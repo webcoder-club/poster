@@ -7,6 +7,5 @@ $parseHH = new App\ParseHH($id);
 
 echo json_encode([
     'id' => $id,
-    'image' => App\DataHelper::getImage($imageName),
     'texts' => $parseHH->getTexts()
 ]);
