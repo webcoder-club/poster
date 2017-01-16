@@ -85,7 +85,6 @@
     <section class="section">
         <div class="container">
             <div class="columns">
-                <!--<img :src="generated.image">-->
                 <img :src="imageUrl">
             </div>
         </div>
@@ -149,7 +148,7 @@
         },
         methods: {
             generate: function () {
-                axios.get('/getTemplate.php', {
+                axios.get('getTemplate.php', {
                     params: {
                         id: this.config.id
                     }
@@ -163,11 +162,14 @@
             },
             getImage: function () {
                 this.imageUrl = '';
-                let url = 'image.php?id=' + this.config.id +
-                    '&start=' + this.config.start +
+                let url = 'image.php?start=' + this.config.start +
                     '&step=' + this.config.step +
                     '&size=' + this.config.size +
-                    '&image=' + this.config.selected;
+                    '&image=' + this.config.selected +
+                    '&vacancy=' + this.generated.texts.vacancy +
+                    '&salary=' + this.generated.texts.salary +
+                    '&town=' + this.generated.texts.town +
+                    '&exp=' + this.generated.texts.exp;
                 console.log(url);
                 this.imageUrl = url;
             }

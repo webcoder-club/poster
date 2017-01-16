@@ -6,12 +6,14 @@ use Sunra\PhpSimple\HtmlDomParser;
 class ParseHH
 {
     private $data = [];
+    private $id;
 
     /**
      * ParseHH constructor.
      * @param int $id
+     * @return $this
      */
-    function __construct(int $id)
+    function parseText(int $id)
     {
         $this->id = $id;
 
@@ -23,6 +25,8 @@ class ParseHH
         $this->data['salary'] = $dom->find('.l-content-colum-1 .l-paddings', 1)->text();
         $this->data['town'] = $dom->find('.l-content-colum-2', 1)->text();
         $this->data['exp'] = $dom->find('[itemprop=experienceRequirements]', 0)->text();
+
+        return $this;
     }
 
     /**
